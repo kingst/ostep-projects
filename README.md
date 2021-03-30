@@ -10,13 +10,13 @@ Also (increasingly) available are some tests to see if your code works; eventual
 every project will have a set of tests available. The testing framework that is
 currently available is found [here](https://github.com/remzi-arpacidusseau/ostep-projects/tree/master/tester).
 A specific testing script, found in each project directory, can be used to run
-the tests against your code. 
+the tests against your code.
 
 For example, in the initial utilities project, the relatively simple `wcat`
 program that you create can be tested by running the `test-wcat.sh` script.
 This could be accomplished by the following commands:
 ```sh
-prompt> git clone https://github.com/remzi-arpacidusseau/ostep-projects
+prompt> git clone https://github.com/kingst/ostep-projects
 prompt> cd ostep-projects/initial-utilities/wcat
 prompt> emacs -nw wcat.c 
 prompt> gcc -o wcat wcat.c -Wall 
