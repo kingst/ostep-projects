@@ -16,10 +16,9 @@ For example, in the initial utilities project, the relatively simple `wcat`
 program that you create can be tested by running the `test-wcat.sh` script.
 This could be accomplished by the following commands:
 ```sh
-prompt> git clone https://github.com/kingst/ostep-projects
 prompt> cd ostep-projects/initial-utilities/wcat
-prompt> emacs -nw wcat.c 
-prompt> gcc -o wcat wcat.c -Wall 
+prompt> emacs -nw wcat.cpp 
+prompt> g++ -o wcat wcat.cpp -Wall 
 prompt> ./test-wcat.sh
 test 1: passed
 test 2: passed
