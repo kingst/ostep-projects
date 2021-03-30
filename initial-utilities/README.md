@@ -28,6 +28,7 @@ Summary of what gets turned in:
 * Each should compile successfully when compiled with the **-Wall** and
 **-Werror** flags.
 * Each should (hopefully) pass the tests we supply to you.
+* We will also test your code on our own set of test cases that we don't supply.
 
 ## wcat
 
