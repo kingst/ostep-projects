@@ -1,7 +1,7 @@
 
 # Unix Utilities
 
-**Before beginning:** Read this [lab tutorial](http://pages.cs.wisc.edu/~remzi/OSTEP/lab-tutorial.pdf); it has some useful tips for programming in the C environment.
+**Before beginning:** Read this [lab tutorial](http://pages.cs.wisc.edu/~remzi/OSTEP/lab-tutorial.pdf); it has some useful tips for programming in the C environment and is still useful even though we're using C++ in this class.
 
 In this project, you'll build a few different UNIX utilities, simple versions
 of commonly used commands like **cat**, **ls**, etc. We'll call each of them a
@@ -33,15 +33,15 @@ Summary of what gets turned in:
 
 The program **wcat** is a simple program. Generally, it reads a file as
 specified by the user and prints its contents. A typical usage is as follows,
-in which the user wants to see the contents of main.c, and thus types: 
+in which the user wants to see the contents of main.cpp, and thus types: 
 
 ```
-prompt> ./wcat main.c
+prompt> ./wcat main.cpp
 #include <stdio.h>
 ...
 ```
 
-As shown, **wcat** reads the file **main.c** and prints out its contents. 
+As shown, **wcat** reads the file **main.cpp** and prints out its contents. 
 The "**./**" before the **wcat** above is a UNIX thing; it just tells the
 system which directory to find **wcat** in (in this case, in the "." (dot)
 directory, which means the current working directory). 
@@ -64,7 +64,7 @@ which we'll assume is in a file called **wcat.cpp**. All C++ code is
 automatically linked with the C++ library, which is full of useful functions you
 can call to implement your program.
 
-For this project, you are required to use the following routines to do
+For this project, you are _required_ to use the following routines to do
 file input and output: **open**, **read**, **write**, and
 **close**. Whenever you use a new function like this, the first
 thing you should do is read about it -- how else will you learn to use
@@ -90,66 +90,63 @@ process of file access. In this case, opening a file just gives you
 back a file descriptor, which is an identifier that you can then passed
 to other routines to read, write, etc.
 
-Here is a typical usage of **fopen()**:
+Here is a typical usage of **open**:
 
-```c
-FILE *fp = fopen("main.c", "r");
-if (fp == NULL) {
-    printf("cannot open file\n");
+```c++
+int fileDescriptor = open("main.cpp", O_RDONLY);
+if (fileDescriptor < 0) {
+    cerr << "cannot open file" << endl;
     exit(1);
 }
 ```
 
-A couple of points here. First, note that **fopen()** takes two arguments: the
+A couple of points here. First, note that **open** takes two arguments: the
 *name* of the file and the *mode*. The latter just indicates what we plan to
-do with the file. In this case, because we wish to read the file, we pass "r"
+do with the file. In this case, because we wish to read the file, we pass O_RDONLY
 as the second argument. Read the man pages to see what other options are
 available. 
 
-Second, note the *critical* checking of whether the **fopen()** actually
+Second, note the *critical* checking of whether the **open** actually
 succeeded. This is not Java where an exception will be thrown when things goes
-wrong; rather, it is C, and it is expected (in good programs, i.e., the
+wrong; rather, it is C++, and it is expected (in good programs, i.e., the
 only kind you'd want to write) that you always will check if the call
 succeeded. Reading the man page tells you the details of what is returned when
 an error is encountered; in this case, the macOS man page says:
 
 ```
-Upon successful completion fopen(), fdopen(), freopen() and fmemopen() return
-a FILE pointer.  Otherwise, NULL is returned and the global variable errno is
-set to indicate the error. 
+If successful, open() returns a non-negative integer, termed a file
+descriptor.  It returns -1 on failure.  The file pointer (used to mark
+the current position within the file) is set to the beginning of the
+file. 
 ```
 
-Thus, as the code above does, please check that **fopen()** does not return
-NULL before trying to use the FILE pointer it returns.
+Thus, as the code above does, please check that **open** does not return
+-1 before trying to use the file descriptor it returns.
 
 Third, note that when the error case occurs, the program prints a message and
 then exits with error status of 1. In UNIX systems, it is traditional to
 return 0 upon success, and non-zero upon failure. Here, we will use 1 to
 indicate failure.
 
-Side note: if **fopen()** does fail, there are many reasons possible as to
+Side note: if **open()** does fail, there are many reasons possible as to
 why.  You can use the functions **perror()** or **strerror()** to print out
 more about *why* the error occurred; learn about those on your own (using
 ... you guessed it ... the man pages!).
 
 Once a file is open, there are many different ways to read from it. The one
-we're suggesting here to you is **fgets()**, which is used to get input from
-files, one line at a time. 
+we're requiring here to you is **read()**, which is used to get input from
+file descriptors. 
 
-To print out file contents, just use **printf()**. For example, after reading
-in a line with **fgets()** into a variable **buffer**, you can just print out
-the buffer as follows:
+To print out file contents, use **write()**. For example, after reading
+in a line with **read()** into a variable **buffer** and keeping track of
+the number of bytes that you read in a variable **bytesRead**, you can
+just print out the buffer as follows:
 
-```c
-printf("%s", buffer);
+```c++
+write(fileDescriptor, buffer, bytesRead)
 ```
 
-Note that you should *not* add a newline (\\n) character to the printf(),
-because that would be changing the output of the file to have extra
-newlines. Just print the exact contents of the read-in buffer (which, of
-course, many include a newline).
-
-Finally, when you are done reading and printing, use **fclose()** to close the
+Finally, when you are done reading and printing, use **close()** to close the
 file (thus indicating you no longer need to read from it).
 
 **Details**
@@ -161,7 +158,7 @@ file (thus indicating you no longer need to read from it).
 * If *no files* are specified on the command line, **wcat** should just exit
   and return 0. Note that this is slightly different than the behavior of 
   normal UNIX **cat** (if you'd like to, figure out the difference).
-* If the program tries to **fopen()** a file and fails, it should print the
+* If the program tries to **open()** a file and fails, it should print the
   exact message "wcat: cannot open file" (followed by a newline) and exit
   with status code 1.  If multiple files are specified on the command line,
   the files should be printed out in order until the end of the file list is
@@ -195,9 +192,9 @@ even this line, which has barfood in it, will be printed.
   with **Foo** will *not* match.
 * Lines can be arbitrarily long (that is, you may see many many characters
   before you encounter a newline character, \\n). **wgrep** should work
-  as expected even with very long lines. For this, you might want to look
-  into the **getline()** library call (instead of **fgets()**), or roll your
-  own. 
+  as expected even with very long lines. For this, you might want to write a
+  function that reads from a file descriptor and buffers data until you reach
+  a newline character.
 * If **wgrep** is passed no command-line arguments, it should print
   "wgrep: searchterm [file ...]" (followed by a newline) and exit with
   status 1.  
@@ -206,9 +203,8 @@ even this line, which has barfood in it, will be printed.
 * In all other cases, **wgrep** should exit with return code 0.
 * If a search term, but no file, is specified, **wgrep** should work,
   but instead of reading from a file, **wgrep** should read from
-  *standard input*. Doing so is easy, because the file stream **stdin**
-  is already open; you can use **fgets()** (or similar routines) to
-  read from it.
+  *standard input*. Doing so is easy, because the file descriptor **STDIN_FILENO**
+  is already open; you can use **read()** to read from it.
 * For simplicity, if passed the empty string as a search string, **wgrep**
   can either match NO lines or match ALL lines, both are acceptable.
 
@@ -239,9 +235,9 @@ character in ASCII. Thus, a compressed file will consist of some number of
 length) and the single character. 
 
 To write out an integer in binary format (not ASCII), you should use
-**fwrite()**. Read the man page for more details. For **wzip**, all
-output should be written to standard output (the **stdout** file stream,
-which, as with **stdin**, is already open when the program starts running). 
+**write()**. Read the man page for more details. For **wzip**, all
+output should be written to standard output (the **STDOUT_FILENO** file descriptor,
+which, is already open when the program starts running). 
 
 Note that typical usage of the **wzip** tool would thus use shell 
 redirection in order to write the compressed output to a file. For example,
