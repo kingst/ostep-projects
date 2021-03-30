@@ -9,21 +9,22 @@ slightly different name to avoid confusion; for example, instead of **cat**,
 you'll be implementing **wcat** (i.e., "wisconsin" cat).
 
 Objectives:
-* Re-familiarize yourself with the C programming language
+* Re-familiarize yourself with the C/C++ programming language
 * Re-familiarize yourself with a shell / terminal / command-line of UNIX
 * Learn (as a side effect) how to use a proper code editor such as emacs
 * Learn a little about how UNIX utilities are implemented
 
-While the project focuses upon writing simple C programs, you can see from the
-above that even that requires a bunch of other previous knowledge, including a
-basic idea of what a shell is and how to use the command line on some
-UNIX-based systems (e.g., Linux or macOS), how to use an editor such as emacs,
-and of course a basic understanding of C programming. If you **do not** have
-these skills already, this is not the right place to start.
+While the project focuses upon writing simple C++ programs, you can
+see from the above that even that requires a bunch of other previous
+knowledge, including a basic idea of what a shell is and how to use
+the command line on some UNIX-based systems (e.g., Linux or macOS),
+how to use an editor such as emacs, and of course a basic
+understanding of C programming. If you **do not** have these skills
+already, this is not the right place to start.
 
 Summary of what gets turned in:
-* A bunch of single .c files for each of the utilities below: **wcat.c**,
-  **wgrep.c**, **wzip.c**, and **wunzip.c**.
+* A bunch of single .cpp files for each of the utilities below: **wcat.cpp**,
+  **wgrep.cpp**, **wzip.cpp**, and **wunzip.cpp**.
 * Each should compile successfully when compiled with the **-Wall** and
 **-Werror** flags.
 * Each should (hopefully) pass the tests we supply to you.
@@ -50,45 +51,44 @@ To create the **wcat** binary, you'll be creating a single source file,
 of **cat**. To compile this program, you will do the following:
 
 ```
-prompt> gcc -o wcat wcat.c -Wall -Werror
+prompt> g++ -o wcat wcat.cpp -Wall -Werror
 prompt> 
 ```
 
 This will make a single *executable binary* called **wcat** which you can
 then run as above. 
 
-You'll need to learn how to use a few library routines from the C standard
-library (often called **libc**) to implement the source code for this program,
-which we'll assume is in a file called **wcat.c**. All C code is
-automatically linked with the C library, which is full of useful functions you
-can call to implement your program. Learn more about the C library
-[here](https://en.wikipedia.org/wiki/C_standard_library) and perhaps
-[here](https://www-s.acm.illinois.edu/webmonkeys/book/c_guide/)<sup>[1](#myfootnote1)</sup>.  
+You'll need to learn how to use a few library routines from the C++ standard
+library (often called **libc++**) to implement the source code for this program,
+which we'll assume is in a file called **wcat.cpp**. All C++ code is
+automatically linked with the C++ library, which is full of useful functions you
+can call to implement your program.
 
-For this project, we recommend using the following routines to do file input
-and output: **fopen()**, **fgets()**, and **fclose()**. Whenever you use a new
-function like this, the first thing you should do is read about it -- how else
-will you learn to use it properly?
+For this project, you are required to use the following routines to do
+file input and output: **open**, **read**, **write**, and
+**close**. Whenever you use a new function like this, the first
+thing you should do is read about it -- how else will you learn to use
+it properly?
 
 On UNIX systems, the best way to read about such functions is to use what are
 called the **man** pages (short for **manual**). In our HTML/web-driven world,
 the man pages feel a bit antiquated, but they are useful and informative and
 generally quite easy to use.
 
-To access the man page for **fopen()**, for example, just type the following
+To access the man page for **open**, for example, just type the following
 at your UNIX shell prompt: 
 ```
-prompt> man fopen
+prompt> man 2 open
 ```
 
 Then, read! Reading man pages effectively takes practice; why not start
 learning now?
 
-We will also give a simple overview here. The **fopen()** function "opens" a
-file, which is a common way in UNIX systems to begin the process of file
-access. In this case, opening a file just gives you back a pointer to a
-structure of type **FILE**, which can then be passed to other routines to
-read, write, etc. 
+We will also give a simple overview here. The **open** function
+"opens" a file, which is a common way in UNIX systems to begin the
+process of file access. In this case, opening a file just gives you
+back a file descriptor, which is an identifier that you can then passed
+to other routines to read, write, etc.
 
 Here is a typical usage of **fopen()**:
 
