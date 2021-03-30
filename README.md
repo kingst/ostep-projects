@@ -16,8 +16,11 @@ For example, in the initial utilities project, the relatively simple `wcat`
 program that you create can be tested by running the `test-wcat.sh` script.
 This could be accomplished by the following commands:
 ```sh
-prompt> # clone this repo, it should look something like this:
+prompt> # clone this repo, it should look something like this
+prompt> # Make sure to replace `project-1-unix-utilities-kingst`
+prompt> # with your repo
 prompt> git clone git@github.com:ECS-150-UC-Davis/project-1-unix-utilities-kingst.git
+prompt> # Again make sure to `cd` your version of `project-1-unix-utilities-kingst`
 prompt> cd project-1-unix-utilities-kingst/initial-utilities/wcat
 prompt> emacs -nw wcat.cpp 
 prompt> g++ -o wcat wcat.cpp -Wall 
