@@ -30,6 +30,10 @@ Summary of what gets turned in:
 * Each should (hopefully) pass the tests we supply to you.
 * We will also test your code on our own set of test cases that we don't supply.
 
+In case you're unfamiliar with Git and GitHub, please see these tutorials:
+* [Git Handbook](https://guides.github.com/introduction/git-handbook/)
+* [GitHub / Git Cheatsheet](https://training.github.com/downloads/github-git-cheat-sheet/)
+
 ## wcat
 
 The program **wcat** is a simple program. Generally, it reads a file as
