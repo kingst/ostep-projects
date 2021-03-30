@@ -25,6 +25,7 @@ already, this is not the right place to start.
 Summary of what gets turned in:
 * A bunch of single .cpp files for each of the utilities below: **wcat.cpp**,
   **wgrep.cpp**, **wzip.cpp**, and **wunzip.cpp**.
+* Make sure that your source code uses the **open()**, **read()**, **write()**, and **close()** calls for file, STDOUT, and STDIN I/O
 * Each should compile successfully when compiled with the **-Wall** and
 **-Werror** flags.
 * Each should (hopefully) pass the tests we supply to you.
@@ -266,8 +267,8 @@ results. For example, to see the contents of **file.txt**, you would type:
 prompt> ./wunzip file.z
 ```
 
-**wunzip** should read in the compressed file (likely using **fread()**)
-and print out the uncompressed output to standard output using **printf()**.
+**wunzip** should read in the compressed file (using **read()**)
+and print out the uncompressed output to standard output using **write()**.
 
 **Details**
 
