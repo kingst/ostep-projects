@@ -1,5 +1,5 @@
 
-In this directory, you should write the program `wcat.c` and compile it into
+In this directory, you should write the program `wcat.cpp` and compile it into
 the binary `wcat` (e.g., `g++ -o wcat wcat.cpp -Wall -Werror`).
 
 After doing so, you can run the tests from this directory by running the
