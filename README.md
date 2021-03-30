@@ -35,7 +35,7 @@ code is written in one shot (impressive!), and (c) that it works perfectly
 (well done!). Even for simple assignments, it is likely that the
 compile/run/debug cycle might take a few iterations.
 
-## C/Linux Projects
+## C++/Linux Projects
 
 ### Initial Projects
 
@@ -47,61 +47,18 @@ Realize the best thing you can do to learn to program in any environment is to
 program **a lot**. These small projects are only the beginning of that
 journey; you'll have to do more on your own to truly become proficient.
 
-* [Unix Utilities](initial-utilities) (cat, grep, zip/unzip)
-* Sort (text-based)
-* Sort (binary)
-* [Reverse](initial-reverse) (very simple reverse program)
-
-### Processes and Scheduling
-
-* [Shell](processes-shell)
-
-### Virtual Memory
-
-* Memory Allocator
+* [Unix Utilities](initial-utilities) (cat, grep, tee)
+* Shell (details TBD)
 
 ### Concurrency
 
-* [Web Server](concurrency-webserver)
-* [Parallel Zip](concurrency-pzip)
-* [MapReduce](concurrency-mapreduce)
-* Web Crawler
+* Web Server (details TBD)
+* MapReduce (details TBD)
 
-### File Systems
+### Networking and distributed systems
 
-* [File System Checker](filesystems-checker)
+* Projects TBD
 
-### Distributed Systems
-
-
-## Kernel Hacking Projects (xv6)
-
-These projects all are to be done inside the
-[xv6](https://pdos.csail.mit.edu/6.828/2017/xv6.html) kernel based on an early
-version of Unix and developed at MIT. Unlike the C/Linux projects, these give
-you direct experience inside a real, working operating system (albeit a simple
-one).
-
-Read the [install notes](INSTALL-xv6.md) to see how to download the latest xv6 
-and install the tools you'll need.
-
-### Initial Projects
-
-* [Intro To xv6](initial-xv6)
-
-### Processes and Scheduling
-
-* [Scheduling (Lottery)](scheduling-xv6-lottery)
-
-### Virtual Memory
-
-* [Virtual Memory (Null Pointer and Read-Only Regions)](vm-xv6-intro)
-
-### Concurrency
-
-* [Kernel Threads (Basic Implementation)](concurrency-xv6-threads)
-
-### File Systems
 
 
 
