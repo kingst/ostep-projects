@@ -53,7 +53,7 @@ system which directory to find **wcat** in (in this case, in the "." (dot)
 directory, which means the current working directory). 
 
 To create the **wcat** binary, you'll be creating a single source file,
-**wcat.c**, and writing a little C code to implement this simplified version
+**wcat.cpp**, and writing a little C++ code to implement this simplified version
 of **cat**. To compile this program, you will do the following:
 
 ```
