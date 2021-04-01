@@ -48,7 +48,7 @@ Realize the best thing you can do to learn to program in any environment is to
 program **a lot**. These small projects are only the beginning of that
 journey; you'll have to do more on your own to truly become proficient.
 
-* [Unix Utilities](initial-utilities) (cat, grep, tee)
+* [Unix Utilities](initial-utilities) (cat, grep, zip, unzip)
 * Shell (details TBD)
 
 ### Concurrency
