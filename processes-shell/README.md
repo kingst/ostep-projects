@@ -2,7 +2,7 @@
 # Unix Shell
 
 In this project, you'll build a simple Unix shell. The shell is the heart of
-the command-line interface, and thus is central to the Unix/C programming
+the command-line interface, and thus is central to the Unix/C++ programming
 environment. Mastering use of the shell is necessary to become proficient in
 this world; knowing how the shell itself is built is the focus of this
 project.
@@ -88,7 +88,7 @@ In either mode, if you hit the end-of-file marker (EOF), you should call
 `exit(0)` and exit gracefully. 
 
 To parse the input line into constituent pieces, you might want to use
-`strsep()`. Read the man page (carefully) for more details.
+the `stl::string` class. Read the man page (carefully) for more details.
 
 To execute commands, look into `fork()`, `exec()`, and `wait()/waitpid()`.
 See the man pages for these functions, and also read the relevant [book
@@ -121,7 +121,9 @@ consider the `access()` system call. For example, when the user types `ls`,
 and path is set to include both `/bin` and `/usr/bin`, try `access("/bin/ls",
 X_OK)`. If that fails, try "/usr/bin/ls". If that fails too, it is an error.
 
-Your initial shell path should contain one directory: `/bin'
+Your initial shell path should contain one directory: `/bin`. Each time the
+user invokes the `path` command, it replaces the path with the arguments that
+the user passes into the command.
 
 Note: Most shells allow you to specify a binary specifically without using a
 search path, using either **absolute paths** or **relative paths**. For
@@ -152,7 +154,7 @@ supplied by the user; if `chdir` fails, that is also an error.
 
 * `path`: The `path` command takes 0 or more arguments, with each argument
   separated by whitespace from the others. A typical usage would be like this:
-  `wish> path /bin /usr/bin`, which would add `/bin` and `/usr/bin` to the
+  `wish> path /bin /usr/bin`, which would set `/bin` and `/usr/bin` as the
   search path of the shell. If the user sets path to be empty, then the shell
   should not be able to run any programs (except built-in commands). The
   `path` command always overwrites the old path with the newly specified
