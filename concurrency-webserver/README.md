@@ -21,7 +21,7 @@ Useful reading from [OSTEP](http://ostep.org) includes:
 
 Before describing what you will be implementing in this project, we will
 provide a very brief overview of how a classic web server works, and the HTTP
-protocol (version 1.0) used to communicate with it; although web browsers and
+protocol (version 1.1) used to communicate with it; although web browsers and
 servers have [evolved a lot over the
 years](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Evolution_of_HTTP),
 the old versions still work and give you a good start in understanding how
@@ -71,21 +71,6 @@ project), a different port number will be used. To fetch a file from a web
 server running at a different port number (say 8000), specify the port number
 directly in the URL, e.g., `http://www.cs.wisc.edu:8000/index.html`.
 
-URLs for executable files (i.e., dynamic content) can include program
-arguments after the file name. For example, to just run a program (`test.cgi`)
-without any arguments, the client might use the URL
-`http://www.cs.wisc.edu/test.cgi`. To specify more arguments, the `?` and `&`
-characters are used, with the `?` character to separate the file name from the
-arguments and the `& character to separate each argument from the others.  For
-example, `http://www.cs.wisc.edu/test.cgi?x=10&y=20` can be used to send
-multiple arguments `x` and `y` and their respective values to the program
-`test.cgi`. The program being run is called a **CGI program** (short for
-[Common Gateway
-Interface](https://en.wikipedia.org/wiki/Common_Gateway_Interface); yes, this
-is a terrible name); the arguments are passed into the program as part of the
-[`QUERY_STRING`](https://en.wikipedia.org/wiki/Query_string) environment
-variable, which the program can then parse to access these arguments.
-
 # The HTTP Request
 
 When a client (e.g., a browser) wants to fetch a file from a machine, the
@@ -101,7 +86,7 @@ server that the client simply wants to read the specified file; however, other
 methods exist (e.g., `POST`). The `uri` is the file name, and perhaps optional
 arguments (in the case of dynamic content). Finally, the `version` indicates
 the version of the HTTP protocol that the web client is using (e.g.,
-HTTP/1.0).
+HTTP/1.1).
 
 The HTTP response (from the server to the browser) is similar; it consists of
 a response line, zero or more response headers, an empty text line, and
@@ -145,27 +130,19 @@ server on the same machine, you can just use the hostname `localhost` as a
 convenience, e.g., `localhost:8003/favorite.html`.
 
 To make the project a bit easier, we are providing you with a minimal web
-server, consisting of only a few hundred lines of C code. As a result, the
+server, consisting of only a few hundred lines of C++ code. As a result, the
 server is limited in its functionality; it does not handle any HTTP requests
-other than `GET`, understands only a few content types, and supports only the
-`QUERY_STRING` environment variable for CGI programs. This web server is also
+other than `GET` and `HEAD`, and understands only a few content types. This web server is also
 not very robust; for example, if a web client closes its connection to the
 server, it may trip an assertion in the server causing it to exit. We do not
 expect you to fix these problems (though you can, if you like, you know, for
 fun).
 
-Helper functions are provided to simplify error checking.  A wrapper calls the
-desired function and immediately terminate if an error occurs. The wrappers
-are found in the file `io-helper.h`); more about this below.  One should
-always check error codes, even if all you do in response is exit; dropping
-errors silently is **BAD C PROGRAMMING** and should be avoided at all costs.
-
 # Finally: Some New Functionality!
 
-In this project, you will be adding two key pieces of functionality to the
-basic web server. First, you make the web server multi-threaded. Second, you
-will implement different scheduling policies so that requests are serviced in
-different orders. You will also be modifying how the web server is invoked so
+In this project, you will be adding one key piece of functionality to the
+basic web server: you will make the web server multi-threaded. 
+You will also be modifying how the web server is invoked so
 that it can handle new input parameters (e.g., the number of threads to
 create).
 
@@ -202,14 +179,14 @@ In your implementation, you must have a master thread that begins by creating
 a pool of worker threads, the number of which is specified on the command
 line. Your master thread is then responsible for accepting new HTTP
 connections over the network and placing the descriptor for this connection
-into a fixed-size buffer; in your basic implementation, the master thread
+into a fixed-size buffer; in your implementation, the master thread
 should not read from this connection. The number of elements in the buffer is
 also specified on the command line. Note that the existing web server has a
 single thread that accepts a connection and then immediately handles the
 connection; in your web server, this thread should place the connection
 descriptor into a fixed-size buffer and return to accepting more connections.
 
-Each worker thread is able to handle both static and dynamic requests. A
+Each worker thread is able to handle requests. A
 worker thread wakes when there is an HTTP request in the queue; when there are
 multiple HTTP requests available, which request is handled depends upon the
 scheduling policy, described below. Once the worker thread wakes, it performs
@@ -226,43 +203,22 @@ project, you are required to use condition variables. Note: if your
 implementation performs any busy-waiting (or spin-waiting) instead, you will
 be heavily penalized.
 
-Side note: do not be confused by the fact that the basic web server we provide
-forks a new process for each CGI process that it runs. Although, in a very
-limited sense, the web server does use multiple processes, it never handles
-more than a single request at a time; the parent process in the web server
-explicitly waits for the child CGI process to complete before continuing and
-accepting more HTTP requests. When making your server multi-threaded, you
-should not modify this section of the code.
 
 ## Part 2: Scheduling Policies
 
-In this project, you will implement a number of different scheduling
-policies. Note that when your web server has multiple worker threads running
+In this project, you will implement one scheduling
+policy. Note that when your web server has multiple worker threads running
 (the number of which is specified on the command line), you will not have any
 control over which thread is actually scheduled at any given time by the
 OS. Your role in scheduling is to determine which HTTP request should be
 handled by each of the waiting worker threads in your web server.
 
-The scheduling policy is determined by a command line argument when the web
-server is started and are as follows:
+The scheduling policy is:
 
 - **First-in-First-out (FIFO)**: When a worker thread wakes, it handles the
 first request (i.e., the oldest request) in the buffer. Note that the HTTP
 requests will not necessarily finish in FIFO order; the order in which the
 requests complete will depend upon how the OS schedules the active threads.
-
-- ** Smallest File First (SFF)**: When a worker thread wakes, it handles the
-request for the smallest file. This policy approximates Shortest Job First to
-the extent that the size of the file is a good prediction of how long it takes
-to service that request. Requests for static and dynamic content may be
-intermixed, depending upon the sizes of those files. Note that this algorithm
-can lead to the starvation of requests for large files.  You will also note
-that the SFF policy requires that something be known about each request (e.g.,
-the size of the file) before the requests can be scheduled. Thus, to support
-this scheduling policy, you will need to do some initial processing of the
-request (hint: using `stat()` on the filename) outside of the worker threads;
-you will probably want the master thread to perform this work, which requires
-that it read from the network descriptor.
 
 ## Security
 
@@ -286,7 +242,7 @@ but perhaps those are beyond the scope of the project.
 Your C program must be invoked exactly as follows:
 
 ```sh
-prompt> ./wserver [-d basedir] [-p port] [-t threads] [-b buffers] [-s schedalg]
+prompt> ./gunrock_web [-d basedir] [-p port] [-t threads] [-b buffers]
 ```
 
 The command line arguments to your web server are to be interpreted as
@@ -303,44 +259,20 @@ follows.
 - **buffers**: the number of request connections that can be accepted at one
   time. Must be a positive integer. Note that it is not an error for more or
   less threads to be created than buffers. Default: 1.
-- **schedalg**: the scheduling algorithm to be performed. Must be one of FIFO
-  or SFF. Default: FIFO.
 
 For example, you could run your program as:
 ```
-prompt> server -d . -p 8003 -t 8 -b 16 -s SFF
+prompt> server -d . -p 8003 -t 8 -b 16
 ```
 
 In this case, your web server will listen to port 8003, create 8 worker threads for
-handling HTTP requests, allocate 16 buffers for connections that are currently
-in progress (or waiting), and use SFF scheduling for arriving requests.
+handling HTTP requests, and allocate 16 buffers for connections that are currently
+in progress (or waiting).
 
 # Source Code Overview
 
-We recommend understanding how the code that we gave you works.  We provide
-the following files:
-
-- [`wserver.c`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/wserver.c): Contains `main()` for the web server and the basic serving loop.
-- [`request.c`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/request.c): Performs most of the work for handling requests in the basic
-  web server. Start at `request_handle()` and work through the logic from
-  there. 
-- [`io_helper.h`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/io_helper.h) and [`io_helper.c`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/io_helper.c): Contains wrapper functions for the system calls invoked by
-  the basic web server and client. The convention is to add `_or_die` to an
-  existing call to provide a version that either succeeds or exits. For
-  example, the `open()` system call is used to open a file, but can fail for a
-  number of reasons. The wrapper, `open_or_die()`, either successfully opens a
-  file or exists upon failure. 
-- [`wclient.c`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/wclient.c): Contains main() and the support routines for the very simple
-  web client. To test your server, you may want to change this code so that it
-  can send simultaneous requests to your server. By launching `wclient`
-  multiple times, you can test how your server handles concurrent requests.
-- [`spin.c`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/spin.c): A simple CGI program. Basically, it spins for a fixed amount
-  of time, which you may useful in testing various aspects of your server.  
-- [`Makefile`](https://github.com/remzi-arpacidusseau/ostep-projects/blob/master/concurrency-webserver/src/Makefile): We also provide you with a sample Makefile that creates
-  `wserver`, `wclient`, and `spin.cgi`. You can type make to create all of 
-  these programs. You can type make clean to remove the object files and the
-  executables. You can type make server to create just the server program,
-  etc. As you create new files, you will need to add them to the Makefile.
+Please see the [Gunrock Web](https://github.com/kingst/gunrock_web) repo for 
+more details on the web server that you're going to modify for this project.
 
 The best way to learn about the code is to compile it and run it. Run the
 server we gave you with your preferred web browser. Run this server with the
@@ -349,11 +281,18 @@ any other server that speaks HTTP. Make small changes to the server code
 (e.g., have it print out more debugging information) to see if you understand
 how it works.
 
-## Additional Useful Reading
+## Thread functions
+
+We created a pthread replacement library, called `dthread`, that you must
+use for this project. `dthread` logs information about your use of threads,
+mutexes, and condition variables so that we can grade your project.
 
 We anticipate that you will find the following routines useful for creating
-and synchronizing threads: `pthread_create()`, `pthread_mutex_init()`,
-`pthread_mutex_lock()`, `pthread_mutex_unlock()`, `pthread_cond_init()`,
-`pthread_cond_wait()`, `pthread_cond_signal()`. To find information on these
-library routines, read the man pages (RTFM). 
+and synchronizing threads: `dthread_create()`, `dthread_detach`,
+`dthread_mutex_lock()`, `dthread_mutex_unlock()`,
+`dthread_cond_wait()`, `dthread_cond_signal()`. To find information on these
+library routines, read the man pages for the pthread version of these same
+routines. To initialize your mutex and condition variables, assign them
+to the `PTHREAD_MUTEX_INITIALIZER` and `PTHREAD_COND_INITIALIZER` macros
+and you'll get initialized mutex and conidition variables.
 
